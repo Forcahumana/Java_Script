@@ -1,49 +1,220 @@
+/* Estilos gerais */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     margin: 0;
+    padding: 0;
+    color: #333;
+    background-color: #f4f4f4;
+}
+
+header {
+    background: #35424a;
+    color: #ffffff;
+    padding: 20px 0;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.5em;
+}
+
+nav {
+    background: #e8491d;
+    color: #ffffff;
+}
+
+nav ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    display: flex;
+    justify-content: center;
+}
+
+nav ul li {
+    padding: 15px 20px;
+}
+
+nav ul li a {
+    color: #ffffff;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 16px;
+}
+
+nav ul li a:hover {
+    color: #cccccc;
+}
+
+main {
     padding: 20px;
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
 }
 
-.hidden {
-    display: none;
+section {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+h2 {
+    color: #35424a;
+    border-bottom: 2px solid #e8491d;
+    padding-bottom: 10px;
+}
+
+footer {
+    background: #35424a;
+    color: #ffffff;
+    text-align: center;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+/* Estilos do formulário */
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="number"],
+input[type="url"],
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+textarea {
+    height: 150px;
+    resize: vertical;
+}
+
+button {
+    background: #e8491d;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+button:hover {
+    background: #333;
+}
+
+button:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Estilos para os cards de filme */
 .movie-card {
     border: 1px solid #ddd;
+    border-radius: 8px;
     padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 5px;
+    margin-bottom: 20px;
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .movie-card img {
     max-width: 200px;
     height: auto;
+    border-radius: 5px;
+    display: block;
+    margin: 0 auto 15px;
 }
 
-form {
+.movie-card h3 {
+    margin: 0 0 10px;
+    color: #e8491d;
+}
+
+.movie-info {
+    margin: 5px 0;
+    font-size: 0.9em;
+}
+
+.movie-link {
+    display: inline-block;
+    margin-top: 10px;
+    color: #35424a;
+    text-decoration: none;
+}
+
+.movie-link:hover {
+    text-decoration: underline;
+}
+
+.movie-actions {
+    margin-top: 15px;
     display: flex;
-    flex-direction: column;
     gap: 10px;
-    margin-bottom: 20px;
 }
 
-input, textarea, button {
-    padding: 8px;
-    font-size: 16px;
+.movie-actions button {
+    padding: 5px 10px;
+    font-size: 14px;
 }
 
-button {
-    cursor: pointer;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
+/* Lista de filmes */
+#movies-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
 }
 
+/* Comentários */
 .comment {
+    border-bottom: 1px solid #eee;
+    padding: 10px 0;
     margin-bottom: 10px;
-    padding: 10px;
-    background-color: #f9f9f9;
+}
+
+.comment-author {
+    font-weight: bold;
+    color: #35424a;
+}
+
+.comment-date {
+    font-size: 0.8em;
+    color: #777;
+}
+
+.comment-text {
+    margin-top: 5px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    nav ul {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    #movies-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .movie-card img {
+        max-width: 150px;
+    }
 }

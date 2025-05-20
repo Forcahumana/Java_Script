@@ -3,47 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Catálogo de Filmes</title>
-    <link rel="stylesheet" href="style.css">
+    <title>CineCatalog - Seu Catálogo de Filmes</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
-        <h1>Meus Filmes Favoritos</h1>
+        <h1>CineCatalog</h1>
+        <p>Seu catálogo pessoal de filmes</p>
     </header>
 
+    <nav>
+        <ul>
+            <li><a href="index.html">Catálogo</a></li>
+            <li><a href="adicionar.html">Adicionar Filme</a></li>
+            <li><a href="#contact">Contato</a></li>
+        </ul>
+    </nav>
+
     <main>
-        <!-- Formulário para adicionar filme -->
-        <section class="add-movie">
-            <h2>Adicionar Novo Filme</h2>
-            <form id="movieForm">
-                <input type="text" id="title" placeholder="Título" required>
-                <input type="number" id="year" placeholder="Ano" required>
-                <input type="text" id="genre" placeholder="Gênero" required>
-                <input type="url" id="image" placeholder="URL da Imagem">
-                <textarea id="description" placeholder="Descrição"></textarea>
-                <button type="submit">Salvar Filme</button>
-            </form>
+        <section id="movies">
+            <h2>Catálogo de Filmes</h2>
+            <div id="movies-list">
+                <!-- Filmes serão carregados via JavaScript -->
+            </div>
         </section>
 
-        <!-- Lista de filmes -->
-        <section class="movie-list">
-            <h2>Meus Filmes</h2>
-            <div id="moviesContainer"></div>
-        </section>
-
-        <!-- Área de comentários (inicialmente escondida) -->
-        <section id="commentsSection" class="hidden">
-            <h2>Comentários</h2>
-            <div id="commentsContainer"></div>
-            <form id="commentForm">
-                <input type="text" id="author" placeholder="Seu nome" required>
-                <textarea id="comment" placeholder="Seu comentário" required></textarea>
-                <button type="submit">Adicionar Comentário</button>
-                <button type="button" id="closeComments">Voltar</button>
+        <section id="contact">
+            <h2>Entre em Contato</h2>
+            <form id="contact-form">
+                <div class="form-group">
+                    <label for="name">Nome:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="subject">Assunto:</label>
+                    <select id="subject" name="subject" aria-label="Selecione o assunto do seu contato" required>
+                        <option value="">Selecione...</option>
+                        <option value="Suporte Técnico">Suporte Técnico</option>
+                        <option value="Sugestão">Sugestão</option>
+                        <option value="Feedback">Feedback</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">Mensagem:</label>
+                    <textarea id="message" name="message" required></textarea>
+                </div>
+                
+                <button type="submit">Enviar Mensagem</button>
             </form>
         </section>
     </main>
 
+    <footer>
+        <p>&copy; 2025 CineCatalog. Todos os direitos reservados.</p>
+    </footer>
+
     <script src="script.js"></script>
+    <script>
+        // Carrega os filmes ao abrir a página
+        document.addEventListener('DOMContentLoaded', function() {
+            renderizarFilmes();
+            
+            // Formulário de contato
+            const contactForm = document.getElementById('contact-form');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    alert('Mensagem enviada com sucesso!');
+                    this.reset();
+                });
+            }
+        });
+
+        function verComentarios(id) {
+            window.location.href = `comentarios.html?id=${id}`;
+        }
+    </script>
 </body>
 </html>

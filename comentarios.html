@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comentários - CineCatalog</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>CineCatalog</h1>
+        <p>Comentários sobre o Filme</p>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="index.html">Catálogo</a></li>
+            <li><a href="adicionar.html">Adicionar Filme</a></li>
+            <li><a href="#contact">Contato</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section id="movie-details">
+            <div id="movie-info">
+                <!-- Informações do filme serão carregadas aqui -->
+            </div>
+            
+            <div id="comments-section">
+                <h2>Comentários</h2>
+                <div id="comments-list">
+                    <!-- Comentários serão carregados aqui -->
+                </div>
+                
+                <form id="comment-form">
+                    <div class="form-group">
+                        <label for="comment-author">Seu Nome:</label>
+                        <input type="text" id="comment-author" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="comment-text">Seu Comentário:</label>
+                        <textarea id="comment-text" required></textarea>
+                    </div>
+                    <button type="submit">Adicionar Comentário</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 CineCatalog. Todos os direitos reservados.</p>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const movieId = urlParams.get('id');
+            
+            if (!movieId) {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            const filme = filmes.find(f => f.id == movieId);
+            if (!filme) {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // Exibe informações do filme
+            const movieInfo = document.getElementById('movie-info');
+            movieInfo.innerHTML = `
+                <div class="movie-card">
+                    <img src="${filme.imagem}" alt="${filme.titulo}">
+                    <h3>${filme.titulo} (${filme.ano})</h3>
+                    <div class="movie-info"><strong>Gênero:</strong> ${filme.genero}</div>
+                    <p>${filme.descricao}</p>
+                    ${filme.link ? `<a href="${filme.link}" class="movie-link" target="_blank">Ver mais sobre o filme</a>` : ''}
+                </div>
+            `;
+            
+            // Carrega comentários
+            renderizarComentarios(filme);
+            
+            // Formulário de comentário
+            document.getElementById('comment-form').addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                const autor = document.getElementById('comment-author').value;
+                const texto = document.getElementById('comment-text').value;
+                
+                if (!autor || !texto) return;
+                
+                filme.comentarios.push(new Comentario(autor, texto));
+                renderizarComentarios(filme);
+                this.reset();
+                
+                // Atualiza o contador na página principal
+                localStorage.setItem('updateComments', 'true');
+            });
+        });
+        
+        function renderizarComentarios(filme) {
+            const commentsList = document.getElementById('comments-list');
+            commentsList.innerHTML = '';
+            
+            if (filme.comentarios.length === 0) {
+                commentsList.innerHTML = '<p>Nenhum comentário ainda. Seja o primeiro a comentar!</p>';
+                return;
+            }
+            
+            filme.comentarios.forEach(comentario => {
+                const commentDiv = document.createElement('div');
+                commentDiv.className = 'comment';
+                
+                const dateStr = comentario.data.toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                commentDiv.innerHTML = `
+                    <div class="comment-author">${comentario.autor}</div>
+                    <div class="comment-date">${dateStr}</div>
+                    <div class="comment-text">${comentario.texto}</div>
+                `;
+                
+                commentsList.appendChild(commentDiv);
+            });
+        }
+    </script>
+</body>
+</html>

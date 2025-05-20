@@ -1,145 +1,155 @@
-// Array para armazenar os filmes
-let movies = [];
+// Armazenamento de filmes (simulando um banco de dados)
+let filmes = JSON.parse(localStorage.getItem('filmes')) || [];
 
-// Elementos do DOM
-const movieForm = document.getElementById('movieForm');
-const moviesContainer = document.getElementById('moviesContainer');
-const commentsSection = document.getElementById('commentsSection');
-const commentsContainer = document.getElementById('commentsContainer');
-const commentForm = document.getElementById('commentForm');
-const closeCommentsBtn = document.getElementById('closeComments');
-
-// Variável para guardar o filme selecionado para comentários
-let selectedMovieId = null;
-
-// Classe para criar objetos de filme
-class Movie {
-    constructor(id, title, year, genre, image, description) {
+// Classe Filme
+class Filme {
+    constructor(id, titulo, ano, genero, imagem, link, descricao) {
         this.id = id;
-        this.title = title;
-        this.year = year;
-        this.genre = genre;
-        this.image = image;
-        this.description = description;
-        this.comments = [];
+        this.titulo = titulo;
+        this.ano = ano;
+        this.genero = genero;
+        this.imagem = imagem;
+        this.link = link;
+        this.descricao = descricao;
+        this.comentarios = [];
     }
 }
 
-// Adicionar filme
-movieForm.addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const title = document.getElementById('title').value;
-    const year = document.getElementById('year').value;
-    const genre = document.getElementById('genre').value;
-    const image = document.getElementById('image').value;
-    const description = document.getElementById('description').value;
-    
-    // Criar ID único simples
-    const id = movies.length > 0 ? Math.max(...movies.map(m => m.id)) + 1 : 1;
-    
-    // Criar novo filme e adicionar ao array
-    const newMovie = new Movie(id, title, year, genre, image, description);
-    movies.push(newMovie);
-    
-    // Limpar formulário e atualizar lista
-    movieForm.reset();
-    renderMovies();
-});
+// Classe Comentário
+class Comentario {
+    constructor(autor, texto, data = new Date()) {
+        this.autor = autor;
+        this.texto = texto;
+        this.data = data;
+    }
+}
 
-// Mostrar comentários de um filme
-function showComments(movieId) {
-    selectedMovieId = movieId;
-    const movie = movies.find(m => m.id === movieId);
+// Função para gerar um novo ID
+function gerarNovoId() {
+    return filmes.length > 0 ? Math.max(...filmes.map(f => f.id)) + 1 : 1;
+}
+
+// Adiciona um filme
+function addMovie() {
+    const titulo = document.getElementById('movie-title').value;
+    const ano = parseInt(document.getElementById('movie-year').value);
+    const genero = document.getElementById('movie-genre').value;
+    const imagem = document.getElementById('movie-image').value;
+    const link = document.getElementById('movie-link').value;
+    const descricao = document.getElementById('movie-description').value;
     
-    // Mostrar a seção de comentários
-    commentsSection.classList.remove('hidden');
+    const novoId = gerarNovoId();
+    const novoFilme = new Filme(novoId, titulo, ano, genero, imagem, link, descricao);
     
-    // Limpar e preencher comentários
-    commentsContainer.innerHTML = '';
-    movie.comments.forEach(comment => {
-        commentsContainer.innerHTML += `
-            <div class="comment">
-                <strong>${comment.author}</strong>
-                <p>${comment.text}</p>
-                <small>${new Date(comment.date).toLocaleString()}</small>
+    filmes.push(novoFilme);
+    salvarFilmes();
+    
+    return novoFilme;
+}
+
+// Atualiza um filme
+function updateMovie() {
+    const id = parseInt(document.getElementById('movie-id').value);
+    const titulo = document.getElementById('movie-title').value;
+    const ano = parseInt(document.getElementById('movie-year').value);
+    const genero = document.getElementById('movie-genre').value;
+    const imagem = document.getElementById('movie-image').value;
+    const link = document.getElementById('movie-link').value;
+    const descricao = document.getElementById('movie-description').value;
+    
+    const index = filmes.findIndex(f => f.id === id);
+    if (index !== -1) {
+        // Mantém os comentários existentes
+        const comentarios = filmes[index].comentarios;
+        filmes[index] = new Filme(id, titulo, ano, genero, imagem, link, descricao);
+        filmes[index].comentarios = comentarios;
+        salvarFilmes();
+    }
+}
+
+// Remove um filme
+function removerFilme(id) {
+    filmes = filmes.filter(f => f.id !== id);
+    salvarFilmes();
+}
+
+// Salva filmes no localStorage
+function salvarFilmes() {
+    localStorage.setItem('filmes', JSON.stringify(filmes));
+}
+
+// Renderiza a lista de filmes
+function renderizarFilmes() {
+    const moviesList = document.getElementById('movies-list');
+    if (!moviesList) return;
+    
+    moviesList.innerHTML = '';
+    
+    if (filmes.length === 0) {
+        moviesList.innerHTML = '<p>Nenhum filme cadastrado no catálogo.</p>';
+        return;
+    }
+    
+    filmes.forEach(filme => {
+        const movieCard = document.createElement('div');
+        movieCard.className = 'movie-card';
+        
+        movieCard.innerHTML = `
+            ${filme.imagem ? `<img src="${filme.imagem}" alt="${filme.titulo}">` : ''}
+            <h3>${filme.titulo}</h3>
+            <div class="movie-info"><strong>Ano:</strong> ${filme.ano}</div>
+            <div class="movie-info"><strong>Gênero:</strong> ${filme.genero}</div>
+            <p>${filme.descricao.substring(0, 100)}${filme.descricao.length > 100 ? '...' : ''}</p>
+            ${filme.link ? `<a href="${filme.link}" class="movie-link" target="_blank">Ver mais sobre o filme</a>` : ''}
+            <div class="movie-actions">
+                <a href="adicionar.html?edit=${filme.id}" class="btn-edit">Editar</a>
+                <button onclick="removerFilme(${filme.id}); renderizarFilmes();">Remover</button>
+                <a href="comentarios.html?id=${filme.id}" class="btn-comments">Comentários (${filme.comentarios.length})</a>
             </div>
         `;
+        
+        moviesList.appendChild(movieCard);
     });
 }
 
-// Adicionar comentário
-commentForm.addEventListener('submit', function(e) {
-    e.preventDefault();
+// Carrega dados iniciais se não houver filmes
+if (filmes.length === 0) {
+    filmes = [
+        new Filme(
+            1, 
+            "O Padrinho", 
+            1972, 
+            "Drama", 
+            "https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_FMjpg_UX200_.jpg", 
+            "https://www.imdb.com/title/tt0068646/", 
+            "A saga da família Corleone, liderada por Vito Corleone, o patriarca."
+        ),
+        new Filme(
+            2, 
+            "Interestelar", 
+            2014, 
+            "Ficção Científica", 
+            "https://m.media-amazon.com/images/M/MV5BZjdkOTU3MDktN2IxOS00OGEyLWFmMjktY2FiMmZkNWIyODZiXkEyXkFqcGdeQXVyMTMxODk2OTU@._V1_FMjpg_UX200_.jpg", 
+            "https://www.imdb.com/title/tt0816692/", 
+            "Uma equipe de exploradores viaja através de um buraco de minhoca no espaço."
+        )
+    ];
     
-    const author = document.getElementById('author').value;
-    const text = document.getElementById('comment').value;
+    // Adiciona alguns comentários de exemplo
+    filmes[0].comentarios.push(
+        new Comentario("João Silva", "Um clássico do cinema! Marlon Brando está incrível."),
+        new Comentario("Maria Oliveira", "A melhor representação da máfia italiana no cinema.")
+    );
     
-    if (!author || !text) return;
+    filmes[1].comentarios.push(
+        new Comentario("Carlos Souza", "Visualmente deslumbrante e emocionante."),
+        new Comentario("Ana Costa", "Nolan mais uma vez supera as expectativas.")
+    );
     
-    // Encontrar o filme selecionado
-    const movie = movies.find(m => m.id === selectedMovieId);
-    if (movie) {
-        // Adicionar novo comentário
-        movie.comments.push({
-            author,
-            text,
-            date: new Date()
-        });
-        
-        // Atualizar comentários e limpar formulário
-        showComments(selectedMovieId);
-        commentForm.reset();
-    }
-});
-
-// Fechar a seção de comentários
-closeCommentsBtn.addEventListener('click', function() {
-    commentsSection.classList.add('hidden');
-});
-
-// Renderizar a lista de filmes
-function renderMovies() {
-    moviesContainer.innerHTML = '';
-    
-    movies.forEach(movie => {
-        const movieElement = document.createElement('div');
-        movieElement.className = 'movie-card';
-        movieElement.innerHTML = `
-            <h3>${movie.title} (${movie.year})</h3>
-            ${movie.image ? `<img src="${movie.image}" alt="${movie.title}">` : ''}
-            <p><strong>Gênero:</strong> ${movie.genre}</p>
-            <p>${movie.description}</p>
-            <button onclick="showComments(${movie.id})">
-                Comentários (${movie.comments.length})
-            </button>
-        `;
-        
-        moviesContainer.appendChild(movieElement);
-    });
+    salvarFilmes();
 }
 
-// exemplos
-function initSampleMovies() {
-    if (movies.length === 0) {
-        movies.push(
-            new Movie(1, "O Padrinho", 1972, "Drama", 
-                     "https://example.com/godfather.jpg", 
-                     "A história da família Corleone."),
-            new Movie(2, "Interestelar", 2014, "Ficção Científica", 
-                     "https://example.com/interstellar.jpg", 
-                     "Viagem espacial para salvar a humanidade.")
-        );
-        
-        // exemplos_comentarios
-        movies[0].comments.push({
-            author: "João",
-            text: "Ótimo filme!",
-            date: new Date()
-        });
-    }
-}
-
-// Iniciar a aplicação
-initSampleMovies();
-renderMovies();
+// Inicializa a página
+document.addEventListener('DOMContentLoaded', function() {
+    renderizarFilmes();
+});
