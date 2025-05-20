@@ -1,7 +1,5 @@
-// Armazenamento de filmes (simulando um banco de dados)
 let filmes = JSON.parse(localStorage.getItem('filmes')) || [];
 
-// Classe Filme
 class Filme {
     constructor(id, titulo, ano, genero, imagem, link, descricao) {
         this.id = id;
@@ -15,7 +13,6 @@ class Filme {
     }
 }
 
-// Classe Comentário
 class Comentario {
     constructor(autor, texto, data = new Date()) {
         this.autor = autor;
@@ -24,12 +21,10 @@ class Comentario {
     }
 }
 
-// Função para gerar um novo ID
 function gerarNovoId() {
     return filmes.length > 0 ? Math.max(...filmes.map(f => f.id)) + 1 : 1;
 }
 
-// Adiciona um filme
 function addMovie() {
     const titulo = document.getElementById('movie-title').value;
     const ano = parseInt(document.getElementById('movie-year').value);
@@ -47,7 +42,6 @@ function addMovie() {
     return novoFilme;
 }
 
-// Atualiza um filme
 function updateMovie() {
     const id = parseInt(document.getElementById('movie-id').value);
     const titulo = document.getElementById('movie-title').value;
@@ -59,7 +53,6 @@ function updateMovie() {
     
     const index = filmes.findIndex(f => f.id === id);
     if (index !== -1) {
-        // Mantém os comentários existentes
         const comentarios = filmes[index].comentarios;
         filmes[index] = new Filme(id, titulo, ano, genero, imagem, link, descricao);
         filmes[index].comentarios = comentarios;
@@ -67,7 +60,6 @@ function updateMovie() {
     }
 }
 
-// Remove um filme
 function removerFilme(id) {
     filmes = filmes.filter(f => f.id !== id);
     salvarFilmes();
@@ -112,7 +104,6 @@ function renderizarFilmes() {
     });
 }
 
-// Carrega dados iniciais se não houver filmes
 if (filmes.length === 0) {
     filmes = [
         new Filme(
@@ -135,7 +126,6 @@ if (filmes.length === 0) {
         )
     ];
     
-    // Adiciona alguns comentários de exemplo
     filmes[0].comentarios.push(
         new Comentario("João Silva", "Um clássico do cinema! Marlon Brando está incrível."),
         new Comentario("Maria Oliveira", "A melhor representação da máfia italiana no cinema.")
@@ -149,7 +139,6 @@ if (filmes.length === 0) {
     salvarFilmes();
 }
 
-// Inicializa a página
 document.addEventListener('DOMContentLoaded', function() {
     renderizarFilmes();
 });
